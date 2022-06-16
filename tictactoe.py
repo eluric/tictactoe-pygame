@@ -18,8 +18,6 @@ def h_line_coords(
     h_line_x = (screen_width - grid_line_length)/2
     h_line_y = (screen_height - grid_line_length)/2 + grid_line_length * line_num/3
 
-    print(f"x: {h_line_x}, y: {h_line_y}")
-
     return h_line_x, h_line_y
 
 def main():
@@ -46,6 +44,19 @@ def main():
     h_line_x1, h_line_y1 = h_line_coords(1, screen_width, screen_height, grid_line_length)
     h_line_x2, h_line_y2 = h_line_coords(2, screen_width, screen_height, grid_line_length)
 
+    # describes the coordinates at the top left of each of the grid squares
+    grid_pos = [
+        [(i, j) for i in range(4) for j in range(k, k+1)] for k in range(4)
+    ]
+
+    y_boundaries = [
+        v_line_y1 + grid_line_length * i/3 for i in range(4)
+    ]
+
+    x_boundaries = [
+        h_line_x1 + grid_line_length * i/3 for i in range(4)
+    ]
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -56,6 +67,14 @@ def main():
         screen.blit(v_line, (v_line_x2, v_line_y2))
         screen.blit(h_line, (h_line_x1, h_line_y1))
         screen.blit(h_line, (h_line_x2, h_line_y2))
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        for i in range(3):
+            if mouse_y >= y_boundaries[i] and mouse_y < y_boundaries[i+1]:
+                for j in range(3):
+                    if mouse_x >= x_boundaries[j] and mouse_x < x_boundaries[j+1]:
+                        print(grid_pos[i][j])
 
         pygame.display.update()
         clock.tick(60)
