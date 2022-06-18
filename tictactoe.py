@@ -3,6 +3,7 @@ class TicTacToe():
         self.state = [
             [" " for i in range(size)] for j in range(size)
         ]
+        self.moves_made = []
         self.last_move = (-1, -1)
         self.size = size
         self.available_moves = [(i, j) for i in range(size) for j in range(size)]
@@ -11,6 +12,12 @@ class TicTacToe():
 
     def get_state(self) -> list[list[str]]:
         return self.state
+
+    def get_available_moves(self) -> list[tuple[int, int]]:
+        return self.available_moves
+
+    def is_x_turn(self) -> bool:
+        return self.x_turn
 
     def is_game_finished(self) -> bool:
         return self.game_finished
@@ -22,6 +29,8 @@ class TicTacToe():
             return False
 
     def make_move(self, row: int, column: int) -> None:
+        if row == -1 or column == -1:
+            return
         if not self.is_empty(row, column):
             return
 
@@ -34,10 +43,25 @@ class TicTacToe():
             self.available_moves.remove((row, column))
             self.x_turn = True
 
+        self.moves_made.append((row, column))
         self.last_move = (row, column)
 
         return
 
+    def undo(self) -> None:
+        row, column = self.last_move
+        self.state[row][column] = " "
+
+        self.moves_made.pop()
+        self.available_moves.append(self.last_move)
+        self.last_move = self.moves_made[-1] if self.moves_made else (-1, -1)
+
+        self.x_turn = not self.x_turn
+
+    # checks if either player has won
+    # returns a tuple of two booleans
+    # (x_wins, o_wins)
+    # if return value is (True, False), then x has won
     def check_win(self) -> tuple[bool, bool]:
         # only need to check the horizontal, vertical and diagonal of the last move
         # if no player has won until that point, then none of the previous moves were winning moves
@@ -111,9 +135,11 @@ class TicTacToe():
 
         
         up_diagonal_win = True
-        if row + column == self.size:
+        if row + column == self.size - 1:
             for i in range(self.size - 1):
-                if self.state[i][self.size-i] != self.state[i+1][self.size-i-1]:
+                print(i)
+                print(self.state)
+                if self.state[i][self.size-1 - i] != self.state[i+1][self.size-1 - i-1]:
                     up_diagonal_win = False
                     break
         
@@ -123,5 +149,9 @@ class TicTacToe():
                     return False, True
                 else:
                     return True, False
+
+        # if there are no more moves to play, it is a draw
+        if not self.available_moves:
+            return True, True
 
         return False, False
