@@ -7,8 +7,8 @@ class AI():
         is_maximising: bool, depth: int
     ) -> int:
 
-        if depth == 0:
-            return 0
+        # if depth == 0:
+        #     return 0
 
         available_moves = ttt.get_available_moves()
 
@@ -61,7 +61,7 @@ class AI():
             ttt.make_move(row, column)
 
             # check how good the move was
-            score = self.minimax(ttt, True, 9)
+            score = self.minimax(ttt, True, 7)
 
             ttt.undo()
 

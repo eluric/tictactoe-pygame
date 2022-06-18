@@ -137,8 +137,6 @@ class TicTacToe():
         up_diagonal_win = True
         if row + column == self.size - 1:
             for i in range(self.size - 1):
-                print(i)
-                print(self.state)
                 if self.state[i][self.size-1 - i] != self.state[i+1][self.size-1 - i-1]:
                     up_diagonal_win = False
                     break
