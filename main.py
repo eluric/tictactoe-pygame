@@ -128,10 +128,30 @@ def main():
                 ttt.make_move(row, column)
                 x_wins, o_wins = ttt.check_win()
 
+                if x_wins and o_wins:
+                    pygame.display.set_caption("Draw")
+                    game_over = True
+                elif x_wins:
+                    pygame.display.set_caption("X wins!")
+                    game_over = True
+                elif o_wins:
+                    pygame.display.set_caption("O wins!")
+                    game_over = True
+
         if not ttt.is_x_turn():
             row, column = ai.make_best_move(ttt)
             ttt.make_move(row, column)
             x_wins, o_wins = ttt.check_win()
+
+            if x_wins and o_wins:
+                pygame.display.set_caption("Draw")
+                game_over = True
+            elif x_wins:
+                pygame.display.set_caption("X wins!")
+                game_over = True
+            elif o_wins:
+                pygame.display.set_caption("O wins!")
+                game_over = True
 
         # draw the grid lines for tic tac toe
         screen.blit(v_line, (v_line_x1, v_line_y1))
@@ -148,16 +168,6 @@ def main():
                 
                 elif state[i][j] == "O":
                     screen.blit(circle_img, xo_coords(i, j, h_line_x1, v_line_y1, grid_line_length))
-
-        if x_wins and o_wins:
-            pygame.display.set_caption("Draw")
-            game_over = True
-        elif x_wins:
-            pygame.display.set_caption("X wins!")
-            game_over = True
-        elif o_wins:
-            pygame.display.set_caption("O wins!")
-            game_over = True
 
         pygame.display.update()
         clock.tick(60)
