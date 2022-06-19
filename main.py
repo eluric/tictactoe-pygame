@@ -27,7 +27,7 @@ def check_click(
     mouse_pos: tuple, 
     size: int,
     x_boundaries: list[str], y_boundaries: list[str]
-) -> tuple[int, int]:
+) -> int:
     mouse_x, mouse_y = mouse_pos
 
     for i in range(size):
@@ -44,15 +44,18 @@ def check_click(
                     #     state[i][j] = "O"
                     #     return (i, j)
 
-                    return (i, j)
+                    return i * size + j
     
-    return (-1, -1)
+    return -9
 
 def xo_coords(
-    row: int, column: int,
+    space: int, size: int,
     top_left_x: int, top_left_y: int,
     grid_line_length: int
 ) -> tuple:
+    column = space % size
+    row = (space-column) / size
+
     x = top_left_x + grid_line_length * column/3
     y = top_left_y + grid_line_length * row/3
 
@@ -120,12 +123,12 @@ def main():
                 if not ttt.is_x_turn():
                     break
 
-                row, column = check_click(
+                grid_space = check_click(
                     pygame.mouse.get_pos(),
                     size, x_boundaries, y_boundaries
                 )
 
-                ttt.make_move(row, column)
+                ttt.make_move(grid_space)
                 x_wins, o_wins = ttt.check_win()
 
                 if x_wins and o_wins:
@@ -139,8 +142,8 @@ def main():
                     game_over = True
 
         if not ttt.is_x_turn():
-            row, column = ai.make_best_move(ttt)
-            ttt.make_move(row, column)
+            move = ai.make_best_move(ttt)
+            ttt.make_move(move)
             x_wins, o_wins = ttt.check_win()
 
             if x_wins and o_wins:
@@ -161,13 +164,12 @@ def main():
 
         state = ttt.get_state()
 
-        for i in range(size):
-            for j in range(size):
-                if state[i][j] == "X":
-                    screen.blit(cross_img, xo_coords(i, j, h_line_x1, v_line_y1, grid_line_length))
-                
-                elif state[i][j] == "O":
-                    screen.blit(circle_img, xo_coords(i, j, h_line_x1, v_line_y1, grid_line_length))
+        for i in range(size * size):
+            if state[i] == "X":
+                screen.blit(cross_img, xo_coords(i, size, h_line_x1, v_line_y1, grid_line_length))
+            
+            elif state[i] == "O":
+                screen.blit(circle_img, xo_coords(i, size, h_line_x1, v_line_y1, grid_line_length))
 
         pygame.display.update()
         clock.tick(60)
